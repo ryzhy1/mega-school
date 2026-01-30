@@ -1,0 +1,14 @@
+langchain_community
+langchain_huggingface
+langchain_core
+pydantic
+langgraph
+langchain_openai
+sentence-transformers
+chromadb
+huggingface_hub[hf_xet]
+langchain-chroma
+ddgs
+beautifulsoup4
+requests
+mcp
