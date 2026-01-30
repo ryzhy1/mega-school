@@ -25,23 +25,6 @@ def is_grounded_answer(expected: str, key_points: list, ctx: str) -> bool:
     return True
 
 
-def debug_block(title: str, payload: str, limit: int = 900):
-    if not DEBUG_RAG:
-        return
-    safe_print("\n" + "═" * 80)
-    safe_print(f"🔎 DEBUG: {title}")
-    safe_print("─" * 80)
-    if payload is None:
-        safe_print("(None)")
-    else:
-        payload = str(payload)
-        if len(payload) > limit:
-            safe_print(payload[:limit] + f"\n...[trimmed {len(payload)-limit} chars]")
-        else:
-            safe_print(payload)
-    safe_print("═" * 80 + "\n")
-
-
 def generate_question_from_context(tech: str, difficulty: int, rag_ctx: str) -> QAItem:
     prompt = f"""
 Ты технический интервьюер. Сгенерируй ОДИН вопрос по технологии: {tech}.
@@ -83,10 +66,6 @@ CONTEXT:
 
 
 def build_expected_for_question(tech: str, question: str, rag_ctx: str) -> QAItem:
-    """
-    Для уже сформулированного вопроса достаём эталонный ответ (expected_answer)
-    и key_points так, чтобы они были exact substring из rag_ctx.
-    """
     prompt = f"""
 Ты технический ассистент. Твоя задача — выписать эталонный ответ из CONTEXT для заданного QUESTION.
 
@@ -182,24 +161,13 @@ def make_answerable_question(
         if not is_context_good(rag_ctx):
             rag_ctx = rag_context_for(tech, tech=tech, k=4)
 
-        debug_block(
-            f"QuestionGen attempt={attempt} tech={tech} difficulty={difficulty} seed_query='{seed_query}' "
-            f"(RAG ctx used for generation)",
-            rag_ctx,
-        )
-
         if not is_context_good(rag_ctx):
-            debug_block("QuestionGen: RAG ctx is NOT good (will retry)", f"len={len(rag_ctx)}")
             seed_query = f"{seed_query} reference"
             continue
 
         qa = generate_question_from_context(tech, difficulty, rag_ctx)
 
         if not is_grounded_answer(qa.expected_answer, qa.key_points, rag_ctx):
-            debug_block(
-                "❌ NOT GROUNDED: expected_answer/key_points not in generation ctx",
-                f"expected={qa.expected_answer}\nkey_points={qa.key_points}",
-            )
             if qa.topic:
                 seed_query = f"{tech} {qa.topic} reference"
             else:
@@ -207,8 +175,6 @@ def make_answerable_question(
             continue
 
         check_ctx = rag_context_for(qa.question, tech=tech, k=2)
-        debug_block("Validation RAG ctx (retrieved by the question)", check_ctx)
-        debug_block("Is answerable by RAG?", str(is_context_good(check_ctx)))
 
         if is_context_good(check_ctx):
             return qa, check_ctx
@@ -218,7 +184,6 @@ def make_answerable_question(
         else:
             seed_query = f"{seed_query} reference"
 
-    debug_block("QuestionGen fallback", f"tech={tech} difficulty={difficulty} -> generic question (no RAG)")
     return (
         QAItem(
             question=f"Расскажи, что такое {tech}, где используется и какие основные понятия ты знаешь?",

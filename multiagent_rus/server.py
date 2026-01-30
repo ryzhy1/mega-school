@@ -8,9 +8,6 @@ mcp = FastMCP("MegaSchool Server")
 
 @mcp.tool()
 def search_devdocs(doc_name: str, keyword: str) -> str:
-    """
-    Шаг 1. Ищет статьи. Возвращает slug и path для чтения.
-    """
     try:
         manifest_url = f"{DEVDOCS_URL}/docs/docs.json"
         resp = requests.get(manifest_url, timeout=2)
@@ -44,12 +41,6 @@ def search_devdocs(doc_name: str, keyword: str) -> str:
 
 @mcp.tool()
 def read_devdocs_page(doc_slug: str, path: str) -> str:
-    """
-    Шаг 2. Загружает полный HTML текст статьи.
-    Args:
-        doc_slug: slug документации (например 'python~3.14')
-        path: путь к статье (например 'library/asyncio')
-    """
     try:
         # 1. Загружаем базу данных конкретной доки (Внимание: файл может быть большим!)
         db_url = f"{DEVDOCS_URL}/docs/{doc_slug}/db.json"

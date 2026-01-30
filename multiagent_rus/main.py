@@ -45,32 +45,22 @@ async def run_interview():
         domain_mode = False
         if not techs:
             domain_mode = True
-            safe_print("ℹ️ Технологии не указаны — перейду к вопросам по роли и опыту в IT.")
 
         primary = techs[0] if techs else ""
         pending = techs[1:] if techs else []
         current_tech = primary
 
         profile["technologies"] = techs
-        if techs:
-            safe_print(f"\n🎯 Распознанные технологии: {techs}")
-            safe_print(f"⭐ Primary tech: {primary}")
-            if pending:
-                safe_print(f"⏳ Pending (background): {pending}")
 
         topics_map = {}
         questions_queue = []
         if not domain_mode:
-            safe_print("\n🧭 Генерирую план интервью (темы и начальные вопросы)...")
             plan = generate_interview_plan(mcp, grade, position, techs, per_tech=3)
             topics_map = plan.get("topics_map", {})
             questions_queue = plan.get("questions_queue", [])
-            safe_print(f"🔎 План по темам: {topics_map}")
-            safe_print(f"🗂️ Вопросов в очереди: {len(questions_queue)}")
 
         loaded_techs = set()
         if not domain_mode:
-            safe_print(f"\n⏳ Загружаю документацию по первичной технологии: {primary}")
             primary_topics = topics_map.get(primary, [])
             if primary_topics:
                 ok_primary = await asyncio.to_thread(
@@ -85,9 +75,6 @@ async def run_interview():
 
             if ok_primary:
                 loaded_techs.add(primary)
-                safe_print(f"✅ Primary RAG ready: {primary}")
-            else:
-                safe_print(f"⚠️ Не удалось загрузить DevDocs по {primary}. Продолжу без гарантий RAG.")
 
         bg_task = None
         if pending and not domain_mode:
@@ -148,11 +135,6 @@ async def run_interview():
             if not user_input:
                 safe_print("🤖 Interviewer: Пожалуйста, ответь на вопрос (или напиши 'стоп').")
                 continue
-
-            try:
-                safe_print(f"👤 {user_input}")
-            except Exception:
-                logging.info(f"Candidate answer: {user_input}")
 
             obs = await asyncio.to_thread(
                 observer_analyze,
@@ -292,11 +274,6 @@ async def run_interview():
 
         feedback = await asyncio.to_thread(generate_final_feedback, profile, evaluation)
         logger.log_feedback(feedback)
-
-        safe_print("\n📊 FINAL FEEDBACK (saved to interview_log_1.json):\n")
-        safe_print(json.dumps(feedback, ensure_ascii=False, indent=2))
-
-        safe_print("\n🏁 Done. Log file: interview_log_1.json")
 
     finally:
         try:

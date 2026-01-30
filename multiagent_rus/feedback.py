@@ -6,9 +6,6 @@ from helpers import extract_json_object
 
 
 def generate_final_feedback(profile: Dict[str, Any], evaluation: Dict[str, Any]) -> dict:
-    """
-    Use LLM to produce structured feedback, but grounded in collected evaluation.
-    """
     prompt = f"""
 Ты Hiring Manager + Mentor. Сгенерируй структурированный отчет по итогам интервью.
 

@@ -1,0 +1,56 @@
+{
+  "team_name": "Скирляк Ярослав Юрьевич",
+  "created_at": "2026-01-30T23:35:37.131212Z",
+  "turns": [
+    {
+      "turn_id": 1,
+      "agent_visible_message": "Привет, Alex! Давай начнем техническое интервью по python.\n\nКакой метод списка позволяет добавлять элементы в конец списка?",
+      "user_message": "не знаю",
+      "internal_thoughts": "[Observer]: Кандидат не знает ответ на вопрос. [Interviewer]: will_follow='Продолжить интервью.'"
+    },
+    {
+      "turn_id": 2,
+      "agent_visible_message": "Хорошая попытка, но ответ на последний вопрос был не совсем точным.\n\nКакой модуль Python помогает работать с деревьями синтаксиса Python?\n\n",
+      "user_message": "стоп",
+      "internal_thoughts": "[Observer]: stop requested. [Interviewer]: generate final feedback."
+    }
+  ],
+  "final_feedback": {
+    "decision": {
+      "grade": "Junior",
+      "hiring_recommendation": "No Hire",
+      "confidence_score": 50
+    },
+    "technical_review": {
+      "topics": [
+        "python"
+      ],
+      "confirmed_skills": [],
+      "knowledge_gaps": [
+        {
+          "topic": "python:python",
+          "issue": "Ответ содержит ошибки/пробелы.",
+          "correct_answer": "append"
+        }
+      ]
+    },
+    "soft_skills": {
+      "clarity": "low",
+      "honesty": "medium",
+      "engagement": "low",
+      "notes": [
+        "Кандидат ответил \"не знаю\" на вопрос о методе добавления элементов в конец списка."
+      ]
+    },
+    "roadmap": [
+      {
+        "topic": "python:python",
+        "next_steps": [
+          "Изучите методы списков в Python. Определите, как добавить элементы в конец списка.",
+          "Проверьте, знаете ли вы другие методы работы с списками в Python."
+        ],
+        "links": []
+      }
+    ]
+  }
+}

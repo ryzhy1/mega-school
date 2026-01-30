@@ -12,10 +12,6 @@ def generate_topics_for_tech(
     tech: str,
     max_topics: int = 3,
 ) -> List[str]:
-    """
-    Агент: генерирует для одной технологии список коротких keyword-тем (строк).
-    Возвращает массив строк (max length = max_topics). Ответ LLM ожидается как JSON-массив строк.
-    """
     prompt = f"""
 Верни СТРОГО JSON-массив коротких keyword-тем для технологии "{tech}".
 Темы должны соответствовать реальным заголовкам/терминам/пакетам в официальной документации DevDocs
@@ -49,10 +45,6 @@ def generate_topics_for_tech(
 
 
 def generate_question_for_tech_topic(grade: str, position: str, tech: str, topic: str) -> str:
-    """
-    Агент: генерирует один вопрос по заданной технологии и теме.
-    Возвращает строку-вопрос. Модель возвращает JSON {"question": "..."}.
-    """
     prompt = f"""
 Ты технический интервьюер. Сформулируй ОДИН конкретный вопрос для кандидата уровня {grade} на позицию {position}.
 TECH: {tech}
@@ -121,12 +113,6 @@ def generate_interview_plan(
     techs: List[str],
     per_tech: int = 3,
 ) -> Dict[str, Any]:
-    """
-    Генерирует план интервью для списка технологий.
-    - Для каждой технологии вызывает generate_topics_for_tech
-    - Валидирует каждую тему через mcp.call_tool('search_devdocs', {doc_name: tech, keyword: topic})
-    - Для валидных тем генерирует один вопрос через generate_question_for_tech_topic
-    """
     topics_map: Dict[str, List[str]] = {}
     questions_queue: List[Dict[str, str]] = []
 
@@ -152,11 +138,6 @@ def generate_interview_plan(
 
 
 def pop_next_question_for_tech(queue: List[Dict[str, str]], tech: str) -> Optional[Dict[str, str]]:
-    """
-    Pop next queued question for a specific tech.
-    Queue item format: {"tech": "...", "topic": "...", "question": "..."}
-    tech comparison is case-insensitive.
-    """
     if not queue:
         return None
 

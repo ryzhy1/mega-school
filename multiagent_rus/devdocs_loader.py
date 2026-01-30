@@ -10,11 +10,6 @@ from rag_store import vs_add_documents
 
 
 def load_devdocs_for_tech(mcp: MCPServerClient, tech: str, max_hits: Optional[int] = None) -> bool:
-    """
-    Load DevDocs pages for a tech.
-    If max_hits is None -> try to load ALL hits returned by search_devdocs.
-    Returns True if at least one doc chunk was added.
-    """
     try:
         search_res = mcp.call_tool("search_devdocs", {"doc_name": tech, "keyword": "introduction"})
     except Exception:
@@ -70,10 +65,6 @@ def load_devdocs_for_tech_with_topics(
     topics: List[str],
     max_hits: Optional[int] = None,
 ) -> bool:
-    """
-    Try loading DevDocs pages for a tech by a list of topics.
-    If max_hits is None -> try all hits for each topic.
-    """
     added = 0
     seen_paths = set()
     for topic in (topics or []):
@@ -117,13 +108,6 @@ def load_devdocs_for_tech_with_topics(
             )
             vs_add_documents([doc])
             added += 1
-            try:
-                snippet = cleaned.replace("\n", " ").strip()[:300]
-                logging.info(f"RAG_ADDED_SNIPPET ({tech}:{topic}): {snippet}...")
-                safe_print(f"RAG_ADDED_SNIPPET ({tech}:{topic}): {snippet}...")
-            except Exception:
-                pass
-            logging.info(f"[RAG ADD] {tech}:{topic} <- {url or path}")
     return added > 0
 
 
@@ -133,10 +117,6 @@ async def background_load_other_techs(
     loaded_techs: set,
     topics_map: Optional[Dict[str, List[str]]] = None,
 ):
-    """
-    Background task: load docs for pending techs while user answers questions.
-    Если topics_map предоставлен, пытаемся загрузить страницы по списку тем для каждой технологии.
-    """
     for tech in pending:
         if tech in loaded_techs:
             continue

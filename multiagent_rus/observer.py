@@ -3,8 +3,6 @@ import json
 from config import llm
 from helpers import extract_json_object, safe_print
 from models import ObserverResult, QAItem
-from question_generation import debug_block
-
 
 def observer_analyze(
     tech: str,
@@ -75,14 +73,9 @@ CONTEXT (docs):
     raw = resp.content
     obj = extract_json_object(raw)
 
-    debug_block("Observer input: EXPECTED ANSWER", qa.expected_answer)
-    debug_block("Observer input: KEY POINTS", json.dumps(qa.key_points, ensure_ascii=False))
-    debug_block("Observer input: RAG CONTEXT", rag_ctx)
-
     try:
         data = json.loads(obj)
     except Exception:
-        debug_block("❌ Observer JSON parse failed. Raw model output", raw)
         data = {
             "internal_thoughts": "Failed to parse analysis.",
             "instruction_to_interviewer": "Продолжай интервью и задай уточняющий вопрос.",
@@ -100,11 +93,6 @@ CONTEXT (docs):
                 "correct_answer_short": "",
             },
         }
-
-    try:
-        debug_block("Observer result JSON", json.dumps(data, ensure_ascii=False, indent=2))
-    except Exception:
-        pass
 
     try:
         return ObserverResult(**data)

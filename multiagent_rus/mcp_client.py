@@ -8,8 +8,6 @@ from helpers import safe_print
 
 
 class MCPServerClient:
-    """Client for local MCP server via stdio (JSON-RPC)."""
-
     def __init__(self, server_script: str = "server.py"):
         self.server_script = server_script
         self.process: Optional[subprocess.Popen] = None
@@ -17,7 +15,6 @@ class MCPServerClient:
         self._start_server()
 
     def _start_server(self):
-        safe_print(f"🔌 [MCP] Starting server: {self.server_script}")
         self.process = subprocess.Popen(
             [sys.executable, self.server_script],
             stdin=subprocess.PIPE,
@@ -38,7 +35,6 @@ class MCPServerClient:
         )
         _ = self._read_response()
         self._send_request("notifications/initialized", {}, msg_id=None)
-        safe_print("✅ [MCP] Ready.")
 
     def _send_request(self, method: str, params: dict, msg_id: Optional[int] = 1):
         if not self.process or not self.process.stdin:

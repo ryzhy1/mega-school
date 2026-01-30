@@ -24,7 +24,6 @@ SHOW_RAG_IN_CONSOLE = True
 
 
 def clean_html(html_content: str) -> str:
-    """Clean HTML -> plain text for embedding."""
     if not html_content:
         return ""
     soup = BeautifulSoup(html_content, "html.parser")
@@ -38,7 +37,6 @@ def clean_html(html_content: str) -> str:
 
 
 def extract_json_array(text: str) -> str:
-    """Extract best-effort JSON array from text."""
     text = text.strip()
     if "```json" in text:
         parts = text.split("```json")
@@ -67,7 +65,6 @@ def extract_json_array(text: str) -> str:
 
 
 def extract_json_object(text: str) -> str:
-    """Extract best-effort JSON object from text."""
     text = text.strip()
     if "```json" in text:
         parts = text.split("```json")
@@ -83,7 +80,6 @@ def extract_json_object(text: str) -> str:
 
 
 def safe_print(*args, **kwargs):
-    """Thread-safe console output with buffering during input."""
     msg = " ".join(str(a) for a in args)
     try:
         logging.info(msg)
@@ -103,7 +99,6 @@ def safe_print(*args, **kwargs):
 
 
 def flush_buffered_prints():
-    """Flush buffered console messages."""
     with CONSOLE_LOCK:
         while PRINT_BUFFER:
             msg = PRINT_BUFFER.popleft()
@@ -111,7 +106,6 @@ def flush_buffered_prints():
 
 
 async def ainput(prompt: str) -> str:
-    """Async-friendly input() that marks input-active period to avoid interleaving prints."""
     loop = asyncio.get_running_loop()
 
     def blocking_input():
